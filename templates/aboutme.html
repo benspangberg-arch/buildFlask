@@ -2,6 +2,11 @@
 
 {% block content %}
 
-print("I am Ben. Here is a picture of a dog")
+<img src="{{ url_for('static', filename='images/French_Bulldog.jpg') }}"
+alt="Cute dog">
 
+
+
+\n 
+<a href="{{ url_for('benMovies') }}">back to movie site</a> 
 {% endblock %}
