@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block content %}
+<h2>User Profile</h2>
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+<form method="POST">
+  <div>
+    <label for="name">Name *:</label>
+    <input type="text" id="name" name="name" required />
+  </div>
+  <div>
+    <label for="email">Email *:</label>
+    <input type="email" id="email" name="email" required />
+  </div>
+  <div>
+    <label for="height">Height in inches *:</label>
+    <input type="number" id="quan" name="quan" min="1" max="100" required />
+  </div>
+  <div>
+    <label for="rel">Favorite Pokemon Type *:</label>
+    <select id="rel" name="rel" required>
+      <option value="">What is guest's favorite Pokemon type</option>
+      <option value="Steel">Steel</option>
+      <option value="Fairy">Fairy</option>
+      <option value="Grass">Grass</option>
+      <option value="Rock">Rock</option>
+      <option value="Ground">Ground</option>
+      <option value="Electric">Electric</option>
+      <option value="Water">Water</option>
+      <option value="Fire">Fire</option>
+      <option value="Psychic">Psychic</option>
+      <option value="Poison">Poison</option>
+      <option value="Normal">Normal</option>
+      <option value="Dark">Dark</option>
+      <option value="Flying">Flying</option>
+      <option value="Dragon">Dragon</option>
+      <option value="Ice">Ice</option>
+      <option value="Ghost">Ghost</option>
+      <option value="Bug">Bug</option>
+      <option value="Fighting">Fighting</option>
+
+    </select>
+  </div>
+  <div>
+    <label for="pokemon">What's your favorite pokemon:</label>
+    <textarea id="pokemon" name="pokemon" rows="4"></textarea>
+  </div>
+  <button type="submit">Save Profile</button>
+</form>
+{% endblock %}
