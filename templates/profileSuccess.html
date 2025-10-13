@@ -1,14 +1,13 @@
-{% extends "base.html" %} {% block content %}
-<h2 class="success">Profile Saved Successfully!</h2>
-<div>
-  <h3>Your Profile Information:</h3>
-  <p><strong>Name:</strong> {{ name }}</p>
-  <p><strong>Email:</strong> {{ email }}</p>
-  <p><strong>Total Guests:</strong> {{ quan }}</p>
-  <p>
-    <strong>Comments or Issues:</strong> {{ comments if comments else "Not
-    provided" }}
-  </p>
-</div>
+{% extends "base.html" %} 
+    {% block content %}
+    <h2 class="success">Profile Saved Successfully!</h2>
+      <div>
+        <h3>Your Profile Information:</h3>
+        <p><strong>Name:</strong> {{ name }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>Total Guests:</strong> {{ height }}</p>
+        <p><strong>Type:</strong> {{ type if type else "Not provided" }}</p>
+        <p><strong>Pokemon</strong> {{ pokemon }}</p>
+      </div>
 <a href="{{ url_for('profile') }}">Create Another Profile</a>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% if error %}
 <p class="error">{{ error }}</p>
 {% endif %}
-<form method="POST">
+<form action="" method="POST">
   <div>
     <label for="name">Name *:</label>
     <input type="text" id="name" name="name" required />
@@ -14,11 +14,11 @@
   </div>
   <div>
     <label for="height">Height in inches *:</label>
-    <input type="number" id="quan" name="quan" min="1" max="100" required />
+    <input type="number" id="height" name="height" min="1" max="100" required />
   </div>
   <div>
-    <label for="rel">Favorite Pokemon Type *:</label>
-    <select id="rel" name="rel" required>
+    <label for="type">Favorite Pokemon Type *:</label>
+    <select id="type" name="type" required>
       <option value="">What is guest's favorite Pokemon type</option>
       <option value="Steel">Steel</option>
       <option value="Fairy">Fairy</option>
