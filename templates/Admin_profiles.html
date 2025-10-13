@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{{super()}} - Profile Admin {% endblock %}
+{% block content %}
+<h1>All Profiles</h1>
+<table class="table table-striped" border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Height</th>
+        <th>Type</th>
+        <th>Pokemon</th>
+        <th>Created At</th>
+    </tr>
+    {% for profile in profiles %}
+    <tr>
+        <td>{{ profile.id }}</td>
+        <td>{{ profile.name }}</td>
+        <td>{{ profile.email}}</td>
+        <td>{{ profile.height }}</td>
+        <td>{{ profile.type }}</td>
+        <td>{{ profile.pokemon }}</td>
+        <td>{{ profile.comments }}</td>
+        <td>{{ profile.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

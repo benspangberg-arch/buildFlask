@@ -9,11 +9,6 @@
     <strong>Comments or Issues:</strong> {{ comments if comments else "Not
     provided" }}
   </p>
-  <p><strong>Relationship to me:</strong> {{ rel }}</p>
-  <p>
-    <strong>Accommodations Required:</strong> {{ "Yes" if accommodations else
-    "No" }}
-  </p>
 </div>
 <a href="{{ url_for('profile') }}">Create Another Profile</a>
 {% endblock %}
