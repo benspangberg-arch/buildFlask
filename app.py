@@ -32,6 +32,7 @@ class Feedback(db.Model):
     comment = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
+
 with app.app_context():
     db.create_all()
 
@@ -108,7 +109,47 @@ def feedback():
     return render_template('feedbackForm.html')
 
 
-@app.route('/admin/profiiiles/delete_first')
+@app.route('/admin/feedback/rating_1')
+def admin_feedback_rating_1():
+    feedbacks = Feedback.query.filter_by(rating=1).all()
+    return render_template('admin_feedback.html', feedbacks=feedbacks)
+
+@app.route('/admin/feedback/rating_2')
+def admin_feedback_rating_2():
+    feedbacks = Feedback.query.filter_by(rating=2).all()
+    return render_template('admin_feedback.html', feedbacks=feedbacks)
+
+@app.route('/admin/feedback/rating_3')
+def admin_feedback_rating_3():
+    feedbacks = Feedback.query.filter_by(rating=3).all()
+    return render_template('admin_feedback.html', feedbacks=feedbacks)
+
+@app.route('/admin/feedback/rating_4')
+def admin_feedback_rating_4():
+    feedbacks = Feedback.query.filter_by(rating=4).all()
+    return render_template('admin_feedback.html', feedbacks=feedbacks)
+
+@app.route('/admin/feedback/rating_5')
+def admin_feedback_rating_5():
+    feedbacks = Feedback.query.filter_by(rating=5).all()
+    return render_template('admin_feedback.html', feedbacks=feedbacks)
+
+@app.route('/admin/profiles/AppendComments')
+def admin_profiles_appendComments():
+    try:
+        profiles_to_update = Profile.query.filter_by(accommodations=True).all()
+        
+        for profile in profiles_to_update:
+            profile.pokemon += " - email accommodations form"
+        db.session.commit()
+        return redirect(url_for('admin_profiles'))
+    except Exception as e:
+        db.session.rollback()
+        error = f"Error updating profiles: {str(e)}"
+        profiles = Profile.query.all()
+        return render_template('admin_profiles.html', profiles=profiles, error=error)
+
+@app.route('/admin/profiles/delete_first')
 def admin_profiles_deleteFirst():
     try:
         all_profiles = Profile.query.order_by(Profile.id).all()
@@ -145,7 +186,7 @@ def admin_feedback():
     feedbacks = Feedback.query.all()
     return render_template('Admin_feedback.html', feedbacks=feedbacks)
 
-@app.route('/admin/profile/deleteButton', methods={'POST'})
+@app.route('/admin/profile/deleteButton', methods=['POST'])
 def admin_profileDeleteButton():
     try:
         profileId = request.form.get('profileId', '').strip()
@@ -157,10 +198,10 @@ def admin_profileDeleteButton():
 
         profile_to_delete = Profile.query.filter_by(id=profileId).first()
 
-        if not profileId:
+        if not profile_to_delete:
             error = f"No profile id included for deletion"
             profiles = Profile.query.all()
-            return render_template('admin_profile.html)', profile=profiles, error=error)
+            return render_template('admin_profile.html', profile=profiles, error=error)
         
         db.session.delete(profile_to_delete)
 
@@ -197,11 +238,10 @@ def admin_profiles_edit():
         
         try:
             profileToUpdate.name = request.form.get('name', profileToUpdate.name)
-            profileToUpdate.email = request.form.get('name', profileToUpdate.email)
-            profileToUpdate.quan = request.form.get('quan', profileToUpdate.quan)
-            profileToUpdate.rel = request.form.get('rel', profileToUpdate.rel)
-            profileToUpdate.accommodations = request.form.get('accommodations', False) == 'yes'
-            profileToUpdate.comments = request.form.get('comment', profileToUpdate.comments)
+            profileToUpdate.email = request.form.get('email', profileToUpdate.email)
+            profileToUpdate.height = request.form.get('height', profileToUpdate.height)
+            profileToUpdate.type = request.form.get('type', profileToUpdate.type)
+            profileToUpdate.pokemon = request.form.get('pokemon', profileToUpdate.pokemon)
             db.session.commit()
             return redirect(url_for('admin_profile'))
         except Exception as e:
@@ -223,12 +263,13 @@ def admin_profiles_edit():
         error = f"No profile found with id {profileId}."
         profiles = Profile.query.all()
         return render_template('admin_profile.html', profiles=profiles, error=error)
+    return render_template('profileEdit.html', profile=profileToEdit)
     
 
 @app.route('/admin/profile/deleteAudaciousGuests')
 def admin_profiles_delete_audacious_guests():
     try:
-        deleted_count = profile.query.filter(Profile.quant > 5).delete()
+        deleted_count = Profile.query.filter(Profile.height >100 ).delete()
         db.session.commit()
 
         return redirect(url_for('admin_profiles'))
@@ -255,11 +296,11 @@ def admin_profilesDeleteByQuantity():
             error = "Please enter a valid number"
             profiles = Profile.query.all()
             return render_template('admin_profiles.html', profiles=profiles, error=error)
-        profiles_to_delete = Profile.query.filter(Profile.quan >= quantity).all()
+        profiles_to_delete = Profile.query.filter(Profile.height >= quantity).all()
         if not profiles_to_delete:
             error = f"No profiles found with {quantity} or more guests"
             profiles = Profile.query.all()
-            return render_template('admin_profiles.html, profiles=profiles, error=error')
+            return render_template('admin_profiles.html', profiles=profiles, error=error)
 
         for profile in profiles_to_delete:
             db.session.delete(profile)
@@ -273,3 +314,7 @@ def admin_profilesDeleteByQuantity():
         error = f"Error deleting profiles: {str(e)}"
         profiles = Profile.query.all()
         return render_template('admin_profiles.html', profiles=profiles, error=error)
+    
+
+
+

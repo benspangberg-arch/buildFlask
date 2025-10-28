@@ -41,6 +41,24 @@
     {% endfor %}
 </table>
 
+<td>
+    <div>
+        <a href="{{url_for('admin_profiles_edit')}}?profileId={{profile.id}}"
+            ><button>Edit</button></a
+        >
+    </div>
+</td>
+<td>
+    <div>
+        <form method="POST" action="{{url_for('admin_profilesDeleteButton')}}">
+            <input name="profileId" type="hidden" value="{{profile.id}}" />
+            <button type="submit">Delete</button>
+        </form>
+    </div>
+</td>
+<th>Edit</th>
+<th>Delete</th>
+
 <nav>
 <br><br>
 <a href="{{ url_for('admin_profiles_deleteFirst') }}">Remove first</a>

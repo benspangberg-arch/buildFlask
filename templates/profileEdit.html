@@ -82,26 +82,26 @@
 
 
 <script>
-function setRelationSelected(selectElement, value) {
-for (var i = 0; i < selectElement.options.length; i++) {
-if (selectElement.options[i].value == value) {
-selectElement.options[i].selected = true;
-return;
-}
-}
-}
-setRelationSelected(document.getElementById("rel"), "{{profile.rel}}");
+  function setRelationSelected(selectElement, value) {
+    for (var i = 0; i < selectElement.options.length; i++) {
+      if (selectElement.options[i].value == value) {
+        selectElement.options[i].selected = true;
+        return;
+      }
+    }
+  }
+  setRelationSelected(document.getElementById("rel"), "{{profile.rel}}");
 </script>
 <script>
-function setAccommodationsCheckbox(checkboxElement, value) {
-console.log("value = " + value);
-if (value == "True") {
-checkboxElement.checked = "checked";
-}
-}
-setAccommodationsCheckbox(
-document.getElementById("accommodations"),
-"{{profile.accommodations}}"
-);
+  function setAccommodationsCheckbox(checkboxElement, value) {
+    console.log("value = " + value);
+    if (value == "True") {
+      checkboxElement.checked = "checked";
+    }
+  }
+  setAccommodationsCheckbox(
+    document.getElementById("accommodations"),
+    "{{profile.accommodations}}"
+  );
 </script>
 {% endblock %}
