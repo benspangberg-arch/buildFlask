@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from datetime import datetime, timezone
 app = Flask(__name__)
 app.secret_key = 'top-secret'
@@ -11,6 +13,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+admin = Admin(app, name='frmstr')
+
 class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -19,6 +23,8 @@ class Profile(db.Model):
     pokemon = db.Column(db.Text)
     type = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+
+admin.add_view(ModelView(Profile, db.session))
 
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -102,6 +108,27 @@ def feedback():
     return render_template('feedbackForm.html')
 
 
+@app.route('/admin/profiiiles/delete_first')
+def admin_profiles_deleteFirst():
+    try:
+        all_profiles = Profile.query.order_by(Profile.id).all()
+
+        if len(all_profiles) < 1:
+            error = "You have no profiles to delete"
+            profiles = Profile.query.all()
+            return render_template('admin_profiles.html', profiles=profiles, error=error)
+        first_profile = all_profiles[0]
+
+        db.session.delete(first_profile)
+        db.session.commit()
+
+        return redirect(url_for('admin_profiles'))
+    except Exception as e:
+        db.session.rollback()
+        error = f"Error deleting profile: {str(e)}"
+        profiles = Profile.query.all()
+        return render_template('admin_profiles.html', profiles=profiles,)
+
 
 
 
@@ -118,8 +145,131 @@ def admin_feedback():
     feedbacks = Feedback.query.all()
     return render_template('Admin_feedback.html', feedbacks=feedbacks)
 
+@app.route('/admin/profile/deleteButton', methods={'POST'})
+def admin_profileDeleteButton():
+    try:
+        profileId = request.form.get('profileId', '').strip()
+
+        if not profileId:
+            error = f"No profile id included for deletion"
+            profiles = Profile.query.all()
+            return render_template('admin_profile.html)', profile=profiles, error=error)
+
+        profile_to_delete = Profile.query.filter_by(id=profileId).first()
+
+        if not profileId:
+            error = f"No profile id included for deletion"
+            profiles = Profile.query.all()
+            return render_template('admin_profile.html)', profile=profiles, error=error)
+        
+        db.session.delete(profile_to_delete)
+
+        db.session.commit()
+
+        return redirect(url_for('admin_profile'))
+    except Exception as e:
+        error = f"Error deleting profile: {str(e)}"
+        profiles = Profile.query.all()
+        return render_template('admin_profile.html', profiles=profiles, error=error)
+
 
       
     #return render_template(
           #  'profileSuccess.html',name=name,email=email,height=height,pokemon=pokemon,type=type,accommodations=accommodations)
    # return render_template('profileForm.html')
+
+@app.route('/admin/profile/edit', methods=['GET', 'POST'])
+def admin_profiles_edit():
+    if request.method == 'POST':
+        profileId = request.form.get("profileId", '', type=int)
+
+        if not profileId:
+            error = "No profile id provided."
+            profiles = Profile.query.all()
+            return redirect(url_for('admin_profiles_edit')+f'?profileId={profileId}', error=error)
+        
+        profileToUpdate = Profile.query.filter_by(id=profileId).first()
+
+        if not profileToUpdate:
+            error = f"No profile with id {profileId} found."
+            profiles = Profile.query.all()
+            return render_template('admin_profile.html', profiles=profiles, error=error)
+        
+        try:
+            profileToUpdate.name = request.form.get('name', profileToUpdate.name)
+            profileToUpdate.email = request.form.get('name', profileToUpdate.email)
+            profileToUpdate.quan = request.form.get('quan', profileToUpdate.quan)
+            profileToUpdate.rel = request.form.get('rel', profileToUpdate.rel)
+            profileToUpdate.accommodations = request.form.get('accommodations', False) == 'yes'
+            profileToUpdate.comments = request.form.get('comment', profileToUpdate.comments)
+            db.session.commit()
+            return redirect(url_for('admin_profile'))
+        except Exception as e:
+            db.session.rollback()
+            error = f"Error writing changes to database: {str(e)}"
+            profiles = Profile.query.all()
+            return render_template("admin_profile.html", profiles=profiles, error=error)
+
+    profileId = request.args.get('profileId')
+
+    if not profileId:
+        error = "no profile id provided."
+        profiles = Profile.query.all()
+        return render_template('admin_profile.html', profiles=profiles, error=error)
+    
+    profileToEdit = Profile.query.filter_by(id=profileId).first()
+
+    if not profileToEdit:
+        error = f"No profile found with id {profileId}."
+        profiles = Profile.query.all()
+        return render_template('admin_profile.html', profiles=profiles, error=error)
+    
+
+@app.route('/admin/profile/deleteAudaciousGuests')
+def admin_profiles_delete_audacious_guests():
+    try:
+        deleted_count = profile.query.filter(Profile.quant > 5).delete()
+        db.session.commit()
+
+        return redirect(url_for('admin_profiles'))
+    except Exception as e:
+        db.session.rollback()
+        error = f"Error dealing with such audacity: {str(e)}"
+        profiles = Profile.query.all()
+        return render_template('admin_profiles.html', profiles=profiles, error=error)
+
+
+@app.route('/admin/profiles/deleteQuantity', methods=['POST'])
+def admin_profilesDeleteByQuantity():
+    try:
+        quantity_str = request.form.get('quantity', '').strip()
+
+        if not quantity_str:
+            error = "Please enter a quantity"
+            profiles = Profile.query.all()
+            return render_template('admin_profiles.html', profiles=profiles, error=error)
+        
+        try:
+            quantity = int(quantity_str)
+        except ValueError:
+            error = "Please enter a valid number"
+            profiles = Profile.query.all()
+            return render_template('admin_profiles.html', profiles=profiles, error=error)
+        profiles_to_delete = Profile.query.filter(Profile.quan >= quantity).all()
+        if not profiles_to_delete:
+            error = f"No profiles found with {quantity} or more guests"
+            profiles = Profile.query.all()
+            return render_template('admin_profiles.html, profiles=profiles, error=error')
+
+        for profile in profiles_to_delete:
+            db.session.delete(profile)
+            
+            
+        db.session.commit()
+
+        return redirect(url_for('admin_profiles'))
+    except Exception as e:
+        db.session.rollback()
+        error = f"Error deleting profiles: {str(e)}"
+        profiles = Profile.query.all()
+        return render_template('admin_profiles.html', profiles=profiles, error=error)
