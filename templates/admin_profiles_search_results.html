@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<h1>Results for "{{ search_term }}"</h1>
+
+{% if profiles %}
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Type</th>
+        <th>Height</th>
+        <th>Pokemon</th>
+        <th>Created</th>
+    </tr>
+
+    {% for p in profiles %}
+    <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.email }}</td>
+        <td>{{ p.type }}</td>
+        <td>{{ p.height }}</td>
+        <td>{{ p.pokemon }}</td>
+        <td>{{ p.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No profiles were found</p>
+{% endif %}
+
+{% endblock %}

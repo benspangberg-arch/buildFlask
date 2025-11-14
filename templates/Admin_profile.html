@@ -2,6 +2,11 @@
 {% block title %}{{super()}} - Profile Admin {% endblock %}
 {% block content %}
 <h1>All Profiles</h1>
+<a href="{{ url_for('admin_profiles_search') }}">
+    <button>Search Profiles by Type</button>
+</a>
+
+<br><br>
 <table class="table table-striped" border="1">
     <tr>
         <th>ID</th>
@@ -53,8 +58,6 @@
     </form>
 </div>
 <br>        
-<a href="{{ url_for('admin_profile_search') }}">
-    <button>Search Profiles by Type</button>
-</a>
+
             
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Search Profiles{% endblock %}
+{% block content %}
+<h1>Search Profiles by Type of Pokemon</h1>
+
+<form method="POST">
+    <label>Type:</label>
+    <input type="text" name="type" placeholder="fire, water, ghost..." required>
+    <button type="submit">search</button>
+</form>
+
+{% endblock %}
