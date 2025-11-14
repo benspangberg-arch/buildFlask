@@ -1,5 +1,15 @@
-<input type="text" name="name" value="{{ profile.name }}">
-<input type="email" name="email" value="{{ profile.email }}">
-<input type="number" name="height" value="{{ profile.height }}">
-<input type="type" name="type" value="{{ profile.type }}">
-<input type="pokemon" name="pokemon" value="{{ profile.pokemon }}">
+<form method="POST">
+
+    <input type="hidden" name="profileId" value="{{ profile.id }}">
+    <label>Name:</label>
+    <input type="text" name="name" value="{{ profile.name }}">
+    <label>Email:</label>
+    <input type="email" name="email" value="{{ profile.email }}">
+    <label>Height:</label>
+    <input type="number" name="height" value="{{ profile.height }}">
+    <label>Type:</label>
+    <input type="text" name="type" value="{{ profile.type }}">
+    <label>Pokemon:</label>
+    <textarea name="pokemon">{{ profile.pokemon }}</textarea>
+    <button type="submit">Save Changes</button>
+</form>

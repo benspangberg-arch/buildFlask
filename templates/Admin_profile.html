@@ -2,6 +2,11 @@
 {% block title %}{{super()}} - Profile Admin {% endblock %}
 {% block content %}
 <h1>All Profiles</h1>
+<a href="{{ url_for('admin_profiles_search') }}">
+    <button>Search Profiles by Type</button>
+</a>
+
+<br><br>
 <table class="table table-striped" border="1">
     <tr>
         <th>ID</th>
@@ -40,24 +45,6 @@
     </tr>
     {% endfor %}
 </table>
-
-<td>
-    <div>
-        <a href="{{url_for('admin_profiles_edit')}}?profileId={{profile.id}}"
-            ><button>Edit</button></a
-        >
-    </div>
-</td>
-<td>
-    <div>
-        <form method="POST" action="{{url_for('admin_profilesDeleteButton')}}">
-            <input name="profileId" type="hidden" value="{{profile.id}}" />
-            <button type="submit">Delete</button>
-        </form>
-    </div>
-</td>
-<th>Edit</th>
-<th>Delete</th>
 
 <nav>
 <br><br>
