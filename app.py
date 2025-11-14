@@ -177,7 +177,7 @@ def admin_profiles_deleteFirst():
 @app.route('/admin/profile')
 def admin_profiles():
     profiles = Profile.query.all()
-    return render_template('Admin_profile.html', profiles=profiles)
+    return render_template('admin_profile.html', profiles=profiles)
 
 
 
@@ -186,7 +186,7 @@ def admin_feedback():
     feedbacks = Feedback.query.all()
     return render_template('Admin_feedback.html', feedbacks=feedbacks)
 
-@app.route('/admin/profile/deleteButton', methods=['POST'])
+@app.route('/admin/profiles/deleteButton', methods=['POST'])
 def admin_profileDeleteButton():
     try:
         profileId = request.form.get('profileId', '').strip()
@@ -194,21 +194,22 @@ def admin_profileDeleteButton():
         if not profileId:
             error = f"No profile id included for deletion"
             profiles = Profile.query.all()
-            return render_template('admin_profile.html)', profile=profiles, error=error)
+            return render_template('admin_profile.html', profiles=profiles, error=error)
 
         profile_to_delete = Profile.query.filter_by(id=profileId).first()
 
         if not profile_to_delete:
             error = f"No profile id included for deletion"
             profiles = Profile.query.all()
-            return render_template('admin_profile.html', profile=profiles, error=error)
+            return render_template('admin_profile.html', profiles=profiles, error=error)
         
         db.session.delete(profile_to_delete)
 
         db.session.commit()
 
-        return redirect(url_for('admin_profile'))
+        return redirect(url_for('admin_profiles'))
     except Exception as e:
+        db.session.rollback()
         error = f"Error deleting profile: {str(e)}"
         profiles = Profile.query.all()
         return render_template('admin_profile.html', profiles=profiles, error=error)
@@ -219,7 +220,7 @@ def admin_profileDeleteButton():
           #  'profileSuccess.html',name=name,email=email,height=height,pokemon=pokemon,type=type,accommodations=accommodations)
    # return render_template('profileForm.html')
 
-@app.route('/admin/profile/edit', methods=['GET', 'POST'])
+@app.route('/admin/profiles/edit', methods=['GET', 'POST'])
 def admin_profiles_edit():
     if request.method == 'POST':
         profileId = request.form.get("profileId", '', type=int)
@@ -227,7 +228,7 @@ def admin_profiles_edit():
         if not profileId:
             error = "No profile id provided."
             profiles = Profile.query.all()
-            return redirect(url_for('admin_profiles_edit')+f'?profileId={profileId}', error=error)
+            return render_template('admin_profile.html', +f'?profileId={profileId}', error=error)
         
         profileToUpdate = Profile.query.filter_by(id=profileId).first()
 
@@ -243,7 +244,7 @@ def admin_profiles_edit():
             profileToUpdate.type = request.form.get('type', profileToUpdate.type)
             profileToUpdate.pokemon = request.form.get('pokemon', profileToUpdate.pokemon)
             db.session.commit()
-            return redirect(url_for('admin_profile'))
+            return redirect(url_for('admin_profiles'))
         except Exception as e:
             db.session.rollback()
             error = f"Error writing changes to database: {str(e)}"
@@ -266,7 +267,7 @@ def admin_profiles_edit():
     return render_template('profileEdit.html', profile=profileToEdit)
     
 
-@app.route('/admin/profile/deleteAudaciousGuests')
+@app.route('/admin/profiles/deleteAudaciousGuests')
 def admin_profiles_delete_audacious_guests():
     try:
         deleted_count = Profile.query.filter(Profile.height >100 ).delete()
@@ -315,6 +316,17 @@ def admin_profilesDeleteByQuantity():
         profiles = Profile.query.all()
         return render_template('admin_profiles.html', profiles=profiles, error=error)
     
+@app.route('/admin/profiles/search', methods=['GET', 'POST'])
+def admin_profiles_search():
+    if request.method == 'POST':
+        search_type = request.form.get("type", '').strip()
 
+        if not search_type:
+            error = "Please enter a type to search for"
+            return render_template('admin_profile.html', profiles=Profile.query.all(), error=error)
 
+        results = Profile.query.filter(Profile.type.ilike(f"%{search_type}%")).all()
 
+        return render_template('admin_profiles_search_results.html', profiles=results, search_term=search_type)
+
+    return render_template('admin_profiles_search_forms.html')
